@@ -96,6 +96,20 @@ function DashboardSkeleton() {
         <SkeletonBlock className="h-40" />
         <SkeletonBlock className="h-40" />
       </div>
+      {/* Agent Grid */}
+      <div className="space-y-3">
+        <SkeletonBlock className="h-5 w-36" />
+        <div className="grid grid-cols-4 gap-3">
+          <SkeletonBlock className="h-[120px]" />
+          <SkeletonBlock className="h-[120px]" />
+          <SkeletonBlock className="h-[120px]" />
+          <SkeletonBlock className="h-[120px]" />
+          <SkeletonBlock className="h-[120px]" />
+          <SkeletonBlock className="h-[120px]" />
+          <SkeletonBlock className="h-[120px]" />
+          <SkeletonBlock className="h-[120px]" />
+        </div>
+      </div>
     </div>
   );
 }
@@ -173,6 +187,20 @@ export default function Dashboard() {
                   <span className="text-xs font-bold text-primary bg-primary/10 rounded px-1.5 py-0.5">
                     #{p.rank}
                   </span>
+                  {(() => {
+                    const agent = agents?.find(
+                      (a) => a.codename === p.agentCodename,
+                    );
+                    return agent ? (
+                      <div
+                        className="w-4 h-4 rounded-full flex items-center justify-center text-[7px] font-bold text-white shrink-0"
+                        style={{ backgroundColor: agent.color }}
+                        data-testid={`priority-agent-avatar-${p.rank}`}
+                      >
+                        {agent.codename.slice(0, 2)}
+                      </div>
+                    ) : null;
+                  })()}
                   <span className="text-xs text-muted-foreground">
                     {p.agentCodename}
                   </span>
@@ -341,7 +369,40 @@ export default function Dashboard() {
                       <span data-testid={`product-tasks-${product.slug}`}>
                         {pendingTasksByProduct(product.id)} pending tasks
                       </span>
-                      <span>{formatTimeAgo(product.lastActivity)}</span>
+                      <div className="flex items-center gap-2">
+                        {(() => {
+                          const productTasks = (tasks ?? []).filter(
+                            (t) => t.productId === product.id,
+                          );
+                          if (productTasks.length === 0) return null;
+                          // Find the agent with the most tasks for this product
+                          const agentCounts: Record<string, number> = {};
+                          for (const t of productTasks) {
+                            agentCounts[t.agentId] =
+                              (agentCounts[t.agentId] ?? 0) + 1;
+                          }
+                          const topAgentId = Object.entries(agentCounts).sort(
+                            (a, b) => b[1] - a[1],
+                          )[0]?.[0];
+                          const topAgent = agents?.find(
+                            (a) => a.id === topAgentId,
+                          );
+                          if (!topAgent) return null;
+                          return (
+                            <span
+                              className="text-[9px] font-medium px-1 py-0.5 rounded"
+                              style={{
+                                backgroundColor: `${topAgent.color}15`,
+                                color: topAgent.color,
+                              }}
+                              data-testid={`product-dept-badge-${product.slug}`}
+                            >
+                              {topAgent.department}
+                            </span>
+                          );
+                        })()}
+                        <span>{formatTimeAgo(product.lastActivity)}</span>
+                      </div>
                     </div>
                   </div>
                 </Link>
@@ -351,7 +412,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── Agent Network Strip ──────────────────────────────── */}
+      {/* ── Visual Agent Grid ─────────────────────────────────── */}
       {agents && (
         <div data-testid="agent-network-section">
           <div className="flex items-center gap-2 mb-3">
@@ -361,36 +422,99 @@ export default function Dashboard() {
             </h2>
           </div>
           <div
-            className="flex gap-4 overflow-x-auto pb-2"
-            data-testid="agent-strip"
+            className="grid grid-cols-4 gap-3"
+            data-testid="agent-grid"
           >
             {agents.map((agent) => {
               const isWorking = agent.status === "working";
+              const isActive = agent.status === "active";
+              const maxTasks = Math.max(...agents.map((a) => a.tasksCompleted), 1);
+              const utilPct = Math.round((agent.tasksCompleted / maxTasks) * 100);
+
               return (
                 <Link href={`/agents/${agent.codename}`} key={agent.id}>
                   <div
-                    className="flex flex-col items-center gap-1.5 min-w-[80px] cursor-pointer group"
-                    data-testid={`agent-node-${agent.codename}`}
+                    className="bg-card border border-card-border rounded-lg overflow-hidden hover:border-primary/30 transition-all cursor-pointer"
+                    style={{
+                      minHeight: "120px",
+                      boxShadow: isWorking
+                        ? `0 0 12px ${agent.color}33`
+                        : undefined,
+                    }}
+                    data-testid={`agent-card-${agent.codename}`}
                   >
+                    {/* Colored accent bar */}
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold text-white transition-transform group-hover:scale-110 ${
-                        isWorking ? "animate-agent-pulse" : ""
-                      }`}
-                      style={
-                        {
-                          backgroundColor: agent.color,
-                          "--pulse-color": `${agent.color}66`,
-                        } as React.CSSProperties
-                      }
-                    >
-                      {agent.codename.slice(0, 2)}
+                      className="h-[3px] w-full"
+                      style={{ backgroundColor: agent.color }}
+                      data-testid={`agent-accent-${agent.codename}`}
+                    />
+
+                    <div className="p-3 flex flex-col gap-2">
+                      {/* Avatar + name + status */}
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0"
+                          style={{ backgroundColor: agent.color }}
+                          data-testid={`agent-avatar-${agent.codename}`}
+                        >
+                          {agent.codename.slice(0, 2)}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <span
+                              className="text-sm font-bold text-foreground"
+                              data-testid={`agent-codename-${agent.codename}`}
+                            >
+                              {agent.codename}
+                            </span>
+                            <span
+                              className={`inline-block w-2 h-2 rounded-full shrink-0 ${
+                                isWorking
+                                  ? "bg-emerald-500 animate-pulse"
+                                  : isActive
+                                    ? "bg-blue-500"
+                                    : "bg-gray-500"
+                              }`}
+                              data-testid={`agent-status-dot-${agent.codename}`}
+                            />
+                          </div>
+                          <span className="text-[10px] text-muted-foreground">
+                            {agent.department}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Current task */}
+                      <p
+                        className="text-xs text-muted-foreground truncate"
+                        data-testid={`agent-task-${agent.codename}`}
+                      >
+                        {agent.currentTask || "No active task"}
+                      </p>
+
+                      {/* Stats bar */}
+                      <div className="mt-auto">
+                        <div className="flex items-center justify-between mb-1">
+                          <span
+                            className="text-[10px] text-muted-foreground/60"
+                            data-testid={`agent-tasks-count-${agent.codename}`}
+                          >
+                            {agent.tasksCompleted} tasks completed
+                          </span>
+                        </div>
+                        <div className="h-1 bg-muted rounded-full overflow-hidden">
+                          <div
+                            className="h-full rounded-full transition-all"
+                            style={{
+                              width: `${utilPct}%`,
+                              backgroundColor: agent.color,
+                            }}
+                            data-testid={`agent-util-bar-${agent.codename}`}
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <span className="text-[10px] font-semibold text-foreground">
-                      {agent.codename}
-                    </span>
-                    <span className="text-[9px] text-muted-foreground text-center leading-tight max-w-[80px] truncate">
-                      {agent.currentTask}
-                    </span>
                   </div>
                 </Link>
               );

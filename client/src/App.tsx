@@ -13,9 +13,12 @@ import GroupChat from "@/pages/group-chat";
 import Briefing from "@/pages/briefing";
 import FocusMode from "@/pages/focus-mode";
 import AgentSettings from "@/pages/agent-settings";
+import OrgMap from "@/pages/org-map";
+import KanbanBoard from "@/pages/kanban-board";
 import VoiceCall from "@/pages/voice-call";
 import GroupCall from "@/pages/group-call";
 import { PerplexityAttribution } from "@/components/PerplexityAttribution";
+import { ActivityTicker } from "@/components/activity-ticker";
 import {
   LayoutDashboard,
   Package,
@@ -24,6 +27,9 @@ import {
   Hash,
   FileText,
   Crosshair,
+  KanbanSquare,
+  Network,
+  Mic,
   ChevronLeft,
   ChevronRight,
   Search,
@@ -70,6 +76,10 @@ function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void 
     { label: "Channels", shortcut: "5", path: "/channels", icon: "#" },
     { label: "Briefing", shortcut: "6", path: "/briefing", icon: "📋" },
     { label: "Focus Mode", shortcut: "7", path: "/focus", icon: "🎯" },
+    { label: "Board", shortcut: "8", path: "/board", icon: "📋" },
+    { label: "Org Map", shortcut: "9", path: "/org", icon: "🗺️" },
+    { label: "Voice Call (MUSE)", shortcut: "", path: "/voice/a-1", icon: "🎙️" },
+    { label: "Group Voice Call", shortcut: "", path: "/voice/group", icon: "🎙️" },
     { label: "Chat with MUSE", shortcut: "", path: "/chat/a-1", icon: "💬" },
     { label: "Chat with FORGE", shortcut: "", path: "/chat/a-3", icon: "💬" },
     { label: "Chat with SCOUT", shortcut: "", path: "/chat/a-2", icon: "💬" },
@@ -146,10 +156,13 @@ function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void 
 
 const navItems = [
   { path: "/", label: "Dashboard", icon: LayoutDashboard, unreadKey: null },
+  { path: "/board", label: "Board", icon: KanbanSquare, unreadKey: null },
   { path: "/products/resumaid", label: "Products", icon: Package, unreadKey: null },
   { path: "/agents/MUSE", label: "Agents", icon: Bot, unreadKey: null },
+  { path: "/org", label: "Org Map", icon: Network, unreadKey: null },
   { path: "/chat/pick", label: "Chat", icon: MessageSquare, unreadKey: "chat" as const },
   { path: "/channels", label: "Channels", icon: Hash, unreadKey: "channels" as const },
+  { path: "/voice/group", label: "Voice", icon: Mic, unreadKey: null },
   { path: "/briefing", label: "Briefing", icon: FileText, unreadKey: null },
   { path: "/focus", label: "Focus", icon: Crosshair, unreadKey: null },
 ];
@@ -198,7 +211,7 @@ function Sidebar() {
                     ? "bg-sidebar-accent text-foreground font-medium"
                     : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50"
                 }`}
-                data-testid={`nav-${label.toLowerCase()}`}
+                data-testid={`nav-${label.toLowerCase().replace(/\s+/g, "-")}`}
               >
                 <Icon size={16} className={isActive ? "text-primary" : ""} />
                 {!collapsed && <span>{label}</span>}
@@ -242,6 +255,7 @@ function AppLayout() {
   const { collapsed } = useSidebar();
   const isFocusMode = location === "/focus";
   const isFullHeightPage = location.startsWith("/chat") || location === "/channels";
+  const isVoicePage = location.startsWith("/voice/");
   const sidebarWidth = collapsed ? "52px" : "200px";
 
   if (isFocusMode) {
@@ -266,8 +280,10 @@ function AppLayout() {
         }`}
         style={{ marginLeft: sidebarWidth }}
       >
+        {!isFullHeightPage && !isVoicePage && <ActivityTicker />}
         <Switch>
           <Route path="/" component={Dashboard} />
+          <Route path="/board" component={KanbanBoard} />
           <Route path="/products/:slug" component={ProductView} />
           <Route path="/agents/:codename/settings" component={AgentSettings} />
           <Route path="/agents/:codename" component={AgentPanel} />
@@ -275,6 +291,7 @@ function AppLayout() {
           <Route path="/chat/:agentId" component={AgentChat} />
           <Route path="/channels" component={GroupChat} />
           <Route path="/briefing" component={Briefing} />
+          <Route path="/org" component={OrgMap} />
           <Route component={NotFound} />
         </Switch>
         {!isFullHeightPage && (
