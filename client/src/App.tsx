@@ -17,6 +17,7 @@ import OrgMap from "@/pages/org-map";
 import KanbanBoard from "@/pages/kanban-board";
 import VoiceCall from "@/pages/voice-call";
 import GroupCall from "@/pages/group-call";
+import ActivityFeed from "@/pages/activity-feed";
 import { PerplexityAttribution } from "@/components/PerplexityAttribution";
 import { ActivityTicker } from "@/components/activity-ticker";
 import {
@@ -30,6 +31,7 @@ import {
   KanbanSquare,
   Network,
   Mic,
+  Activity,
   ChevronLeft,
   ChevronRight,
   Search,
@@ -77,7 +79,8 @@ function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void 
     { label: "Briefing", shortcut: "6", path: "/briefing", icon: "📋" },
     { label: "Focus Mode", shortcut: "7", path: "/focus", icon: "🎯" },
     { label: "Board", shortcut: "8", path: "/board", icon: "📋" },
-    { label: "Org Map", shortcut: "9", path: "/org", icon: "🗺️" },
+    { label: "Activity", shortcut: "9", path: "/activity", icon: "📡" },
+    { label: "Org Map", shortcut: "0", path: "/org", icon: "🗺️" },
     { label: "Voice Call (MUSE)", shortcut: "", path: "/voice/a-1", icon: "🎙️" },
     { label: "Group Voice Call", shortcut: "", path: "/voice/group", icon: "🎙️" },
     { label: "Chat with MUSE", shortcut: "", path: "/chat/a-1", icon: "💬" },
@@ -163,6 +166,7 @@ const navItems = [
   { path: "/chat/pick", label: "Chat", icon: MessageSquare, unreadKey: "chat" as const },
   { path: "/channels", label: "Channels", icon: Hash, unreadKey: "channels" as const },
   { path: "/voice/group", label: "Voice", icon: Mic, unreadKey: null },
+  { path: "/activity", label: "Activity", icon: Activity, unreadKey: null },
   { path: "/briefing", label: "Briefing", icon: FileText, unreadKey: null },
   { path: "/focus", label: "Focus", icon: Crosshair, unreadKey: null },
 ];
@@ -284,6 +288,7 @@ function AppLayout() {
         <Switch>
           <Route path="/" component={Dashboard} />
           <Route path="/board" component={KanbanBoard} />
+          <Route path="/activity" component={ActivityFeed} />
           <Route path="/products/:slug" component={ProductView} />
           <Route path="/agents/:codename/settings" component={AgentSettings} />
           <Route path="/agents/:codename" component={AgentPanel} />

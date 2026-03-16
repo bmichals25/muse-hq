@@ -121,6 +121,9 @@ export type RecentActivity = {
   agentColor: string;
   timestamp: string;
   linkTo: string; // route to navigate to
+  productSlug?: string;
+  productName?: string;
+  productColor?: string;
 };
 
 // ── Voice Chat types ────────────────────────────────────────────────

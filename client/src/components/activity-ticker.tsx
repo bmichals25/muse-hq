@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import type { RecentActivity } from "@shared/schema";
 
 function formatTimeAgo(iso: string): string {
@@ -48,18 +49,20 @@ export function ActivityTicker() {
       data-testid="activity-ticker"
     >
       {/* Activity label with pulsing green dot */}
-      <div
-        className="flex items-center gap-1.5 shrink-0"
-        data-testid="ticker-label"
-      >
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-        </span>
-        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
-          Activity
-        </span>
-      </div>
+      <Link href="/activity">
+        <div
+          className="flex items-center gap-1.5 shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+          data-testid="ticker-label"
+        >
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          </span>
+          <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+            Activity
+          </span>
+        </div>
+      </Link>
 
       {/* Divider */}
       <div className="w-px h-4 bg-card-border shrink-0" />
