@@ -1,0 +1,197 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* MUSE HQ — Dark command center palette */
+    --background: 222 47% 6%;
+    --foreground: 210 20% 92%;
+
+    --card: 222 40% 9%;
+    --card-foreground: 210 20% 92%;
+
+    --popover: 222 40% 9%;
+    --popover-foreground: 210 20% 92%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 6%;
+
+    --secondary: 222 30% 14%;
+    --secondary-foreground: 210 20% 92%;
+
+    --muted: 222 30% 14%;
+    --muted-foreground: 215 15% 55%;
+
+    --accent: 222 30% 14%;
+    --accent-foreground: 210 20% 92%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 20% 92%;
+
+    --border: 222 30% 16%;
+    --input: 222 30% 16%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 222 47% 7%;
+    --sidebar-foreground: 210 20% 92%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 222 30% 14%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 222 30% 14%;
+    --sidebar-ring: 217 91% 60%;
+
+    --card-border: 222 30% 16%;
+  }
+
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 210 20% 92%;
+    --card: 222 40% 9%;
+    --card-foreground: 210 20% 92%;
+    --popover: 222 40% 9%;
+    --popover-foreground: 210 20% 92%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 6%;
+    --secondary: 222 30% 14%;
+    --secondary-foreground: 210 20% 92%;
+    --muted: 222 30% 14%;
+    --muted-foreground: 215 15% 55%;
+    --accent: 222 30% 14%;
+    --accent-foreground: 210 20% 92%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 20% 92%;
+    --border: 222 30% 16%;
+    --input: 222 30% 16%;
+    --ring: 217 91% 60%;
+    --sidebar-background: 222 47% 7%;
+    --sidebar-foreground: 210 20% 92%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 222 30% 14%;
+    --sidebar-accent-foreground: 210 20% 92%;
+    --sidebar-border: 222 30% 14%;
+    --sidebar-ring: 217 91% 60%;
+    --card-border: 222 30% 16%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Agent pulse animation */
+@keyframes agent-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--pulse-color); }
+  50% { box-shadow: 0 0 0 6px transparent; }
+}
+.animate-agent-pulse {
+  animation: agent-pulse 2s ease-in-out infinite;
+}
+
+/* Priority card glow */
+.glow-priority {
+  box-shadow: 0 0 20px var(--glow-color);
+}
+
+/* Skeleton shimmer */
+.skeleton-shimmer {
+  background: linear-gradient(90deg, hsl(222 30% 14%) 25%, hsl(222 30% 18%) 50%, hsl(222 30% 14%) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Smooth color transitions for product views */
+.transition-colors-smooth {
+  transition: background-color 0.4s ease;
+}
+
+/* Task completion animation */
+@keyframes task-complete {
+  0% { opacity: 0; background: radial-gradient(circle, rgba(16,185,129,0.2) 0%, transparent 70%); }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.animate-task-complete {
+  animation: task-complete 2s ease-out;
+}
+
+/* Timer pulse for focus mode */
+@keyframes timer-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--pulse-color, rgba(59, 130, 246, 0.4)); }
+  50% { box-shadow: 0 0 0 20px transparent; }
+}
+.animate-timer-pulse {
+  animation: timer-pulse 1s ease-out 3;
+}
+
+/* Command palette backdrop */
+.command-backdrop {
+  backdrop-filter: blur(8px);
+  background: rgba(10, 14, 26, 0.8);
+}
+
+/* Unread badge pulse */
+@keyframes badge-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+.animate-badge-pulse {
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+/* Roundtable — raised hand pulse (orange glow) */
+@keyframes roundtable-hand-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5); }
+  50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+}
+.animate-roundtable-hand-pulse {
+  animation: roundtable-hand-pulse 1.2s ease-in-out infinite;
+}
+
+/* Roundtable — active speaker ring animation */
+@keyframes roundtable-speaking {
+  0%, 100% { box-shadow: 0 0 0 0 var(--speaker-color, rgba(59, 130, 246, 0.6)); }
+  50% { box-shadow: 0 0 0 10px var(--speaker-color-faded, rgba(59, 130, 246, 0)); }
+}
+.animate-roundtable-speaking {
+  animation: roundtable-speaking 1.4s ease-in-out infinite;
+}
+
+/* Roundtable — user glow when hand is raised */
+@keyframes roundtable-glow {
+  0%, 100% { box-shadow: 0 0 12px 2px rgba(245, 158, 11, 0.3); }
+  50% { box-shadow: 0 0 24px 6px rgba(245, 158, 11, 0.5); }
+}
+.animate-roundtable-glow {
+  animation: roundtable-glow 1.6s ease-in-out infinite;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(222 30% 20%);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(222 30% 28%);
+}
